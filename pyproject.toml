@@ -1,0 +1,10 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "installment store"
+version = "1.0"
+description = "app for installment store"
+authors = [{ name="Nadir", email="your@email.com" }]
+dependencies = []

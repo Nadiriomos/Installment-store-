@@ -1,0 +1,62 @@
+# -------------------------------
+# Python cache and build junk
+# -------------------------------
+__pycache__/        # Python bytecode cache
+*.py[cod]           # Compiled Python files (.pyc, .pyo, .pyd)
+*$py.class          # Jython class files
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# -------------------------------
+# Virtual environments
+# -------------------------------
+venv/
+ENV/
+env/
+.venv/
+
+# -------------------------------
+# Environment + secrets
+# -------------------------------
+.env               # Local environment variables (DB passwords, API keys)
+*.env              # Any file ending with .env
+
+# -------------------------------
+# IDE / Editor configs
+# -------------------------------
+.vscode/           # VSCode settings
+.idea/             # JetBrains / PyCharm settings
+*.sublime-workspace
+*.sublime-project
+
+# -------------------------------
+# Logs & misc
+# -------------------------------
+*.log              # Log files
+*.pot              # Translation template files
+*.mo               # Compiled message catalogs
+
+# -------------------------------
+# OS files (depending on system)
+# -------------------------------
+.DS_Store          # macOS trash
+Thumbs.db          # Windows trash
