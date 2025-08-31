@@ -2,7 +2,6 @@
 import os
 import time
 import shutil
-import sqlite3
 import webbrowser
 import urllib.parse
 from datetime import datetime
