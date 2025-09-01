@@ -72,7 +72,7 @@ class HomePage(QMainWindow):
         # --- Centered PNG ---
         image_label = QLabel()
         pixmap = QPixmap("src/icons/home_page.png")
-        image_label.setPixmap(pixmap.scaled(800, 800, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        image_label.setPixmap(pixmap.scaled(1000, 1000, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         image_label.setAlignment(Qt.AlignCenter)
 
         content_layout.addStretch()
