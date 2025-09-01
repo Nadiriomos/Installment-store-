@@ -20,8 +20,8 @@ from PySide6.QtWidgets import (QApplication, QMainWindow, QPushButton, QLabel, Q
 from PySide6.QtCore import Qt
 from PySide6.QtGui import (QKeySequence, QShortcut)
 
-# helpers 
-from utils.helpers import (get_screen_geometry)
+# helpers
+from utils.helpers import get_screen_geometry, make_sidebar_button
 
 # === home page ui ===
 
@@ -49,21 +49,19 @@ class HomePage(QMainWindow):
 
         # Sidebar
         sidebar = QFrame()
-        sidebar.setFixedWidth(200)
+        sidebar.setFixedWidth(250)
         sidebar.setStyleSheet("QFrame { background: #2c3e50; }")
 
         sidebar_layout = QVBoxLayout(sidebar)
-        sidebar_layout.addWidget(QPushButton("Dashboard"))
-        sidebar_layout.addWidget(QPushButton("Customers"))
-        sidebar_layout.addWidget(QPushButton("Inventory"))
-        sidebar_layout.addWidget(QPushButton("Installments"))
-        sidebar_layout.addWidget(QPushButton("Reports"))
+        sidebar_layout.addWidget(make_sidebar_button("Dashboard", "icons/dashboard.png"))
+        sidebar_layout.addWidget(make_sidebar_button("Customers", "icons/customer.png"))
+        sidebar_layout.addWidget(make_sidebar_button("Payments", "icons/payments.png"))
+        sidebar_layout.addWidget(make_sidebar_button("Reports", "icons/report.png"))
 
-        sidebar_layout.addStretch()  # pushes the rest down
+        sidebar_layout.addStretch()
 
-        # Bottom buttons
-        sidebar_layout.addWidget(QPushButton("Settings"))
-        sidebar_layout.addWidget(QPushButton("Help/contact"))
+        sidebar_layout.addWidget(make_sidebar_button("Settings", "icons/settings.png"))
+        sidebar_layout.addWidget(make_sidebar_button("Contact", "icons/contact.png"))
 
         # Content
         content = QFrame()
