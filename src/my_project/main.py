@@ -15,58 +15,66 @@ from openpyxl import Workbook
 
 # pySide6
 from PySide6.QtWidgets import (QApplication, QMainWindow, QPushButton, QLabel, QFrame, QHBoxLayout,
-                               QVBoxLayout, QWidget, QStackedWidget, QTableWidget, QTableWidgetItem,)
+                               QVBoxLayout, QWidget, QStackedWidget, QTableWidget, QTableWidgetItem,
+                               QHeaderView, QSizePolicy)
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QIcon
+from PySide6.QtGui import (QKeySequence, QShortcut)
+
+# helpers 
+from utils.helpers import (get_screen_geometry)
 
 # === home page ui ===
+
 
 
 class HomePage(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Home Page")
-        self.showMaximized()
+        self.showMaximized()   # full window
 
-        # === Central Widget (needed for QMainWindow) ===
+        # set geometry
+        geometry = get_screen_geometry(app)
+        self.setGeometry(geometry)
+
+        # shortcuts
+        QShortcut(QKeySequence("Esc"), self, activated=self.close)
+
+        # Central widget (required for QMainWindow)
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
 
-        # Main layout (horizontal: sidebar + content)
+        # Main layout (horizontal split)
         main_layout = QHBoxLayout(central_widget)
 
-        # ----- Sidebar -----
+        # Sidebar
         sidebar = QFrame()
-        sidebar.setFrameShape(QFrame.StyledPanel)
-        sidebar.setStyleSheet("QFrame { background: #2c3e50; }")  # Dark sidebar
-        sidebar.setFixedWidth(200)  # Sidebar width
+        sidebar.setFixedWidth(200)
+        sidebar.setStyleSheet("QFrame { background: #2c3e50; }")
 
         sidebar_layout = QVBoxLayout(sidebar)
-        sidebar_layout.setSpacing(15)
-
-        # Add buttons to sidebar
         sidebar_layout.addWidget(QPushButton("Dashboard"))
         sidebar_layout.addWidget(QPushButton("Students"))
         sidebar_layout.addWidget(QPushButton("Payments"))
         sidebar_layout.addWidget(QPushButton("Reports"))
-        sidebar_layout.addStretch()  # Push items up
+        sidebar_layout.addStretch()
 
-        # ----- Main Content -----
+        # Content
         content = QFrame()
-        content.setFrameShape(QFrame.StyledPanel)
         content.setStyleSheet("QFrame { background: #ecf0f1; }")
 
         content_layout = QVBoxLayout(content)
         content_layout.addWidget(QLabel("Welcome to Main Content"))
 
-        # Add both frames to main layout
+        # Add frames to main layout
         main_layout.addWidget(sidebar)
-        main_layout.addWidget(content, stretch=1)
+        main_layout.addWidget(content, stretch=1)  # content grows
 
+        # Ensure content expands
+        content.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
-# === main ===
 if __name__ == "__main__":
     app = QApplication([])
     home_page = HomePage()
-    home_page.show()   
+    home_page.show()
     app.exec()
