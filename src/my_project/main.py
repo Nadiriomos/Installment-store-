@@ -18,7 +18,7 @@ from PySide6.QtWidgets import (QApplication, QMainWindow, QPushButton, QLabel, Q
                                QVBoxLayout, QWidget, QStackedWidget, QTableWidget, QTableWidgetItem,
                                QHeaderView, QSizePolicy)
 from PySide6.QtCore import Qt
-from PySide6.QtGui import (QKeySequence, QShortcut)
+from PySide6.QtGui import (QKeySequence, QShortcut, QPixmap)
 
 # helpers
 from utils.helpers import get_screen_geometry, make_sidebar_button
@@ -53,22 +53,31 @@ class HomePage(QMainWindow):
         sidebar.setStyleSheet("QFrame { background: #2c3e50; }")
 
         sidebar_layout = QVBoxLayout(sidebar)
-        sidebar_layout.addWidget(make_sidebar_button("Dashboard", "icons/dashboard.png"))
-        sidebar_layout.addWidget(make_sidebar_button("Customers", "icons/customer.png"))
-        sidebar_layout.addWidget(make_sidebar_button("Payments", "icons/payments.png"))
-        sidebar_layout.addWidget(make_sidebar_button("Reports", "icons/report.png"))
+        sidebar_layout.addWidget(make_sidebar_button("Dashboard", "src/icons/dashboard.png"))
+        sidebar_layout.addWidget(make_sidebar_button("Customers", "src/icons/customer.png"))
+        sidebar_layout.addWidget(make_sidebar_button("Payments", "src/icons/payments.png"))
+        sidebar_layout.addWidget(make_sidebar_button("Reports", "src/icons/report.png"))
 
         sidebar_layout.addStretch()
 
-        sidebar_layout.addWidget(make_sidebar_button("Settings", "icons/settings.png"))
-        sidebar_layout.addWidget(make_sidebar_button("Contact", "icons/contact.png"))
+        sidebar_layout.addWidget(make_sidebar_button("Settings", "src/icons/settings.png"))
+        sidebar_layout.addWidget(make_sidebar_button("Contact", "src/icons/contact.png"))
 
         # Content
         content = QFrame()
         content.setStyleSheet("QFrame { background: #ecf0f1; }")
 
         content_layout = QVBoxLayout(content)
-        content_layout.addWidget(QLabel("Welcome to Main Content"))
+
+        # --- Centered PNG ---
+        image_label = QLabel()
+        pixmap = QPixmap("src/icons/home_page.png")
+        image_label.setPixmap(pixmap.scaled(800, 800, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        image_label.setAlignment(Qt.AlignCenter)
+
+        content_layout.addStretch()
+        content_layout.addWidget(image_label, alignment=Qt.AlignCenter)
+        content_layout.addStretch()
 
         # Add frames to main layout
         main_layout.addWidget(sidebar)
