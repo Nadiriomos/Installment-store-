@@ -54,10 +54,16 @@ class HomePage(QMainWindow):
 
         sidebar_layout = QVBoxLayout(sidebar)
         sidebar_layout.addWidget(QPushButton("Dashboard"))
-        sidebar_layout.addWidget(QPushButton("Students"))
-        sidebar_layout.addWidget(QPushButton("Payments"))
+        sidebar_layout.addWidget(QPushButton("Customers"))
+        sidebar_layout.addWidget(QPushButton("Inventory"))
+        sidebar_layout.addWidget(QPushButton("Installments"))
         sidebar_layout.addWidget(QPushButton("Reports"))
-        sidebar_layout.addStretch()
+
+        sidebar_layout.addStretch()  # pushes the rest down
+
+        # Bottom buttons
+        sidebar_layout.addWidget(QPushButton("Settings"))
+        sidebar_layout.addWidget(QPushButton("Help/contact"))
 
         # Content
         content = QFrame()
