@@ -1,5 +1,5 @@
 # Standard library
-import os
+import sys, os
 import time
 import shutil
 import webbrowser
@@ -21,8 +21,14 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import (QKeySequence, QShortcut, QPixmap)
 
 # helpers
-from utils.helpers import get_screen_geometry, make_sidebar_button
-
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+from src.my_project.utils.helpers import get_screen_geometry, make_sidebar_button
+from src.my_project.pages.dashboard import DashboardPage
+from src.my_project.pages.customers import CustomersPage
+from src.my_project.pages.payments import PaymentsPage
+from src.my_project.pages.reports import ReportsPage
+from src.my_project.pages.settings import SettingsPage
+from src.my_project.pages.contact import ContactPage
 # === home page ui ===
 
 
@@ -31,60 +37,73 @@ class HomePage(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Home Page")
-        self.showMaximized()   # full window
+        self.showMaximized()
 
         # set geometry
         geometry = get_screen_geometry(app)
         self.setGeometry(geometry)
 
-        # shortcuts
+        # shortcut
         QShortcut(QKeySequence("Esc"), self, activated=self.close)
 
-        # Central widget (required for QMainWindow)
+        # Central widget
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
-
-        # Main layout (horizontal split)
         main_layout = QHBoxLayout(central_widget)
 
-        # Sidebar
+        # Sidebar + Content
+        sidebar = self._build_sidebar()
+        self.content_stack = self._build_content()
+
+        # Layout assembly
+        main_layout.addWidget(sidebar)
+        main_layout.addWidget(self.content_stack, stretch=1)
+
+    # === Sidebar ===
+    def _build_sidebar(self):
         sidebar = QFrame()
         sidebar.setFixedWidth(250)
         sidebar.setStyleSheet("QFrame { background: #2c3e50; }")
 
-        sidebar_layout = QVBoxLayout(sidebar)
-        sidebar_layout.addWidget(make_sidebar_button("Dashboard", "src/icons/dashboard.png"))
-        sidebar_layout.addWidget(make_sidebar_button("Customers", "src/icons/customer.png"))
-        sidebar_layout.addWidget(make_sidebar_button("Payments", "src/icons/payments.png"))
-        sidebar_layout.addWidget(make_sidebar_button("Reports", "src/icons/report.png"))
+        layout = QVBoxLayout(sidebar)
 
-        sidebar_layout.addStretch()
+        # --- Top buttons ---
+        top_buttons = [
+            ("Dashboard", "src/icons/dashboard.png", 0),
+            ("Customers", "src/icons/customer.png", 1),
+            ("Payments", "src/icons/payments.png", 2),
+            ("Reports", "src/icons/report.png", 3),
+        ]
+        for text, icon, index in top_buttons:
+            btn = make_sidebar_button(text, icon)
+            btn.clicked.connect(lambda _, i=index: self.content_stack.setCurrentIndex(i))
+            layout.addWidget(btn)
 
-        sidebar_layout.addWidget(make_sidebar_button("Settings", "src/icons/settings.png"))
-        sidebar_layout.addWidget(make_sidebar_button("Contact", "src/icons/contact.png"))
+        layout.addStretch()  # pushes next widgets down
 
-        # Content
-        content = QFrame()
-        content.setStyleSheet("QFrame { background: #ecf0f1; }")
+        # --- Bottom buttons ---
+        bottom_buttons = [
+            ("Settings", "src/icons/settings.png", 4),
+            ("Contact", "src/icons/contact.png", 5),
+        ]
+        for text, icon, index in bottom_buttons:
+            btn = make_sidebar_button(text, icon)
+            btn.clicked.connect(lambda _, i=index: self.content_stack.setCurrentIndex(i))
+            layout.addWidget(btn)
 
-        content_layout = QVBoxLayout(content)
+        return sidebar
 
-        # --- Centered PNG ---
-        image_label = QLabel()
-        pixmap = QPixmap("src/icons/home_page.png")
-        image_label.setPixmap(pixmap.scaled(1000, 1000, Qt.KeepAspectRatio, Qt.SmoothTransformation))
-        image_label.setAlignment(Qt.AlignCenter)
+    # === Content Area ===
+    def _build_content(self):
+        stack = QStackedWidget()
+        stack.addWidget(DashboardPage())  # index 0
+        stack.addWidget(CustomersPage())  # index 1
+        stack.addWidget(PaymentsPage())   # index 2
+        stack.addWidget(ReportsPage())    # index 3
+        stack.addWidget(SettingsPage())   # index 4
+        stack.addWidget(ContactPage())    # index 5
+        return stack
 
-        content_layout.addStretch()
-        content_layout.addWidget(image_label, alignment=Qt.AlignCenter)
-        content_layout.addStretch()
-
-        # Add frames to main layout
-        main_layout.addWidget(sidebar)
-        main_layout.addWidget(content, stretch=1)  # content grows
-
-        # Ensure content expands
-        content.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
 if __name__ == "__main__":
     app = QApplication([])
