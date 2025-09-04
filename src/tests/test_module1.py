@@ -9,12 +9,12 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")
 from src.my_project.utils.helpers import get_screen_geometry, make_sidebar_button
 
 # import page widgets
-from src.my_project.pages.dashboard import DashboardPage
-from src.my_project.pages.customers import CustomersPage
-from src.my_project.pages.payments import PaymentsPage
-from src.my_project.pages.reports import ReportsPage
-from src.my_project.pages.settings import SettingsPage
-from src.my_project.pages.contact import ContactPage
+from src.tests.pages.dashboard import DashboardPage
+from src.tests.pages.customers import CustomersPage
+from src.tests.pages.payments import PaymentsPage
+from src.tests.pages.reports import ReportsPage
+from src.tests.pages.settings import SettingsDialog
+from src.tests.pages.contact import ContactPage
 
 class HomePage(QMainWindow):
     def __init__(self):
@@ -83,7 +83,7 @@ class HomePage(QMainWindow):
         stack.addWidget(CustomersPage())  # index 1
         stack.addWidget(PaymentsPage())   # index 2
         stack.addWidget(ReportsPage())    # index 3
-        stack.addWidget(SettingsPage())   # index 4
+        stack.addWidget(SettingsDialog())   # index 4
         stack.addWidget(ContactPage())    # index 5
         return stack
 
