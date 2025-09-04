@@ -60,3 +60,8 @@ env/
 # -------------------------------
 .DS_Store          # macOS trash
 Thumbs.db          # Windows trash
+/src/my_project/__pycache__
+/src/my_project/pages/__pycache__
+/src/my_project/utils/__pycache__
+/src/tests/__pycache__
+/src/tests/pages/__pycache__

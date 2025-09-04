@@ -27,6 +27,7 @@ from src.my_project.pages.dashboard import DashboardPage
 from src.my_project.pages.customers import CustomersPage
 from src.my_project.pages.payments import PaymentsPage
 from src.my_project.pages.reports import ReportsPage
+from src.my_project.pages.inventory import InventoryPage
 from src.my_project.pages.settings import SettingsPage
 from src.my_project.pages.contact import ContactPage
 # === home page ui ===
@@ -73,6 +74,7 @@ class HomePage(QMainWindow):
             ("Customers", "src/icons/customer.png", 1),
             ("Payments", "src/icons/payments.png", 2),
             ("Reports", "src/icons/report.png", 3),
+            ("Inventory", "src/icons/inventory.png", 4)
         ]
         for text, icon, index in top_buttons:
             btn = make_sidebar_button(text, icon)
@@ -83,8 +85,8 @@ class HomePage(QMainWindow):
 
         # --- Bottom buttons ---
         bottom_buttons = [
-            ("Settings", "src/icons/settings.png", 4),
-            ("Contact", "src/icons/contact.png", 5),
+            ("Settings", "src/icons/settings.png", 5),
+            ("Contact", "src/icons/contact.png", 6),
         ]
         for text, icon, index in bottom_buttons:
             btn = make_sidebar_button(text, icon)
@@ -100,8 +102,9 @@ class HomePage(QMainWindow):
         stack.addWidget(CustomersPage())  # index 1
         stack.addWidget(PaymentsPage())   # index 2
         stack.addWidget(ReportsPage())    # index 3
-        stack.addWidget(SettingsPage())   # index 4
-        stack.addWidget(ContactPage())    # index 5
+        stack.addWidget(InventoryPage())  # index 4
+        stack.addWidget(SettingsPage())   # index 5
+        stack.addWidget(ContactPage())    # index 6
         return stack
 
 

@@ -6,25 +6,9 @@ from typing import Dict, Any
 
 from PySide6.QtCore import Qt, QSettings, QTimer
 from PySide6.QtGui import QIntValidator, QDoubleValidator, QIcon
-from PySide6.QtWidgets import (
-    QApplication,
-    QCheckBox,
-    QComboBox,
-    QDialog,
-    QDialogButtonBox,
-    QFormLayout,
-    QGridLayout,
-    QGroupBox,
-    QHBoxLayout,
-    QLabel,
-    QLineEdit,
-    QMessageBox,
-    QPushButton,
-    QSpinBox,
-    QTabWidget,
-    QVBoxLayout,
-    QWidget,
-    QFileDialog,
+from PySide6.QtWidgets import (QApplication,QCheckBox,QComboBox,QDialog,QDialogButtonBox,QFormLayout,
+    QGridLayout,QGroupBox,QHBoxLayout,QLabel,QLineEdit,QMessageBox,QPushButton,QSpinBox,QTabWidget,
+    QVBoxLayout,QWidget,QFileDialog,
 )
 
 
@@ -37,25 +21,17 @@ class AppSettings:
     store_name: str = "My Store"
     logo_path: str = ""
     contact_phone: str = ""
-    tax_id: str = ""
+    addres: str = ""
 
     # Finance / Installments
     currency: str = "USD"
     default_frequency: str = "Monthly"  # Weekly, Biweekly, Monthly
-    grace_days: int = 3
-    interest_rate: float = 0.0  # percent
-    penalty_fee: float = 0.0    # flat amount
+    installment_fee: float = 15    # installment presantage fee
 
     # Inventory
     low_stock_alerts: bool = True
     low_stock_threshold: int = 5
     barcode_enabled: bool = False
-
-    # Sales / Invoice
-    invoice_prefix: str = "INV-"
-    allow_partial_payments: bool = True
-    default_payment_method: str = "Installment"  # Cash, Installment
-    digital_receipt: bool = True
 
     # Reports / Dashboard
     default_report_period: str = "Monthly"  # Daily, Weekly, Monthly
@@ -84,7 +60,7 @@ class AppSettings:
 # ------------------------------
 # Settings dialog
 # ------------------------------
-class SettingsDialog(QDialog):
+class SettingsPage(QDialog):
     def __init__(self, parent: QWidget | None = None):
         super().__init__(parent)
         self.setWindowTitle("Settings")
@@ -99,7 +75,6 @@ class SettingsDialog(QDialog):
         self.tabs.addTab(self._build_general_tab(), "General")
         self.tabs.addTab(self._build_finance_tab(), "Finance")
         self.tabs.addTab(self._build_inventory_tab(), "Inventory")
-        self.tabs.addTab(self._build_sales_tab(), "Sales & Invoice")
         self.tabs.addTab(self._build_reports_tab(), "Reports")
         self.tabs.addTab(self._build_security_tab(), "Security")
         self.tabs.addTab(self._build_notifications_tab(), "Notifications")
@@ -138,12 +113,12 @@ class SettingsDialog(QDialog):
         logo_row.addWidget(browse_logo)
 
         self.contact_phone = QLineEdit(self.model.contact_phone)
-        self.tax_id = QLineEdit(self.model.tax_id)
+        self.addres = QLineEdit(self.model.addres)
 
         form.addRow("Store name", self.store_name)
         form.addRow("Logo path", self._hwrap(logo_row))
         form.addRow("Contact phone", self.contact_phone)
-        form.addRow("Tax / Registration #", self.tax_id)
+        form.addRow("Address", self.addres)
         return w
 
     def _build_finance_tab(self) -> QWidget:
@@ -151,7 +126,7 @@ class SettingsDialog(QDialog):
         form = QFormLayout(w)
 
         self.currency = QComboBox()
-        self.currency.addItems(["USD", "EUR", "DZD", "GBP", "MAD", "TND"])  # add your region
+        self.currency.addItems(["USD", "EUR", "DZD"])  # add your region
         self.currency.setCurrentText(self.model.currency)
         self.currency.currentTextChanged.connect(self._mark_restart_required)
 
@@ -159,21 +134,12 @@ class SettingsDialog(QDialog):
         self.default_frequency.addItems(["Weekly", "Biweekly", "Monthly"]) 
         self.default_frequency.setCurrentText(self.model.default_frequency)
 
-        self.grace_days = QSpinBox()
-        self.grace_days.setRange(0, 60)
-        self.grace_days.setValue(self.model.grace_days)
-
-        self.interest_rate = QLineEdit(str(self.model.interest_rate))
-        self.interest_rate.setValidator(QDoubleValidator(0.0, 1000.0, 3, self))
-
-        self.penalty_fee = QLineEdit(str(self.model.penalty_fee))
-        self.penalty_fee.setValidator(QDoubleValidator(0.0, 1_000_000.0, 2, self))
+        self.installment_fee = QLineEdit(str(self.model.installment_fee))
+        self.installment_fee.setValidator(QDoubleValidator(0.0, 1_000_000.0, 2, self))
 
         form.addRow("Currency", self.currency)
         form.addRow("Default frequency", self.default_frequency)
-        form.addRow("Grace period (days)", self.grace_days)
-        form.addRow("Interest rate (%)", self.interest_rate)
-        form.addRow("Penalty fee (flat)", self.penalty_fee)
+        form.addRow("installment percentage", self.installment_fee)
         return w
 
     def _build_inventory_tab(self) -> QWidget:
@@ -193,27 +159,6 @@ class SettingsDialog(QDialog):
         form.addRow("Low-stock alerts", self.low_stock_alerts)
         form.addRow("Low-stock threshold", self.low_stock_threshold)
         form.addRow("Enable barcode scanning", self.barcode_enabled)
-        return w
-
-    def _build_sales_tab(self) -> QWidget:
-        w = QWidget()
-        form = QFormLayout(w)
-
-        self.invoice_prefix = QLineEdit(self.model.invoice_prefix)
-        self.allow_partial = QCheckBox()
-        self.allow_partial.setChecked(self.model.allow_partial_payments)
-
-        self.default_payment_method = QComboBox()
-        self.default_payment_method.addItems(["Cash", "Installment"]) 
-        self.default_payment_method.setCurrentText(self.model.default_payment_method)
-
-        self.digital_receipt = QCheckBox()
-        self.digital_receipt.setChecked(self.model.digital_receipt)
-
-        form.addRow("Invoice prefix", self.invoice_prefix)
-        form.addRow("Allow partial payments", self.allow_partial)
-        form.addRow("Default payment", self.default_payment_method)
-        form.addRow("Digital receipt (PDF/email)", self.digital_receipt)
         return w
 
     def _build_reports_tab(self) -> QWidget:
@@ -363,22 +308,15 @@ class SettingsDialog(QDialog):
             store_name=self.store_name.text(),
             logo_path=self.logo_path.text(),
             contact_phone=self.contact_phone.text(),
-            tax_id=self.tax_id.text(),
+            addres=self.addres.text(),
             # Finance
             currency=self.currency.currentText(),
             default_frequency=self.default_frequency.currentText(),
-            grace_days=self.grace_days.value(),
-            interest_rate=float(self.interest_rate.text() or 0),
-            penalty_fee=float(self.penalty_fee.text() or 0),
+            installment_fee=float(self.installment_fee.text() or 0),
             # Inventory
             low_stock_alerts=self.low_stock_alerts.isChecked(),
             low_stock_threshold=self.low_stock_threshold.value(),
             barcode_enabled=self.barcode_enabled.isChecked(),
-            # Sales
-            invoice_prefix=self.invoice_prefix.text(),
-            allow_partial_payments=self.allow_partial.isChecked(),
-            default_payment_method=self.default_payment_method.currentText(),
-            digital_receipt=self.digital_receipt.isChecked(),
             # Reports
             default_report_period=self.report_period.currentText(),
             show_outstanding_metric=self.show_outstanding.isChecked(),
@@ -422,22 +360,15 @@ class SettingsDialog(QDialog):
         self.store_name.setText(self.model.store_name)
         self.logo_path.setText(self.model.logo_path)
         self.contact_phone.setText(self.model.contact_phone)
-        self.tax_id.setText(self.model.tax_id)
+        self.addres.setText(self.model.addres)
 
         self.currency.setCurrentText(self.model.currency)
         self.default_frequency.setCurrentText(self.model.default_frequency)
-        self.grace_days.setValue(self.model.grace_days)
-        self.interest_rate.setText(str(self.model.interest_rate))
-        self.penalty_fee.setText(str(self.model.penalty_fee))
+        self.installment_fee.setText(str(self.model.installment_fee))
 
         self.low_stock_alerts.setChecked(self.model.low_stock_alerts)
         self.low_stock_threshold.setValue(self.model.low_stock_threshold)
         self.barcode_enabled.setChecked(self.model.barcode_enabled)
-
-        self.invoice_prefix.setText(self.model.invoice_prefix)
-        self.allow_partial.setChecked(self.model.allow_partial_payments)
-        self.default_payment_method.setCurrentText(self.model.default_payment_method)
-        self.digital_receipt.setChecked(self.model.digital_receipt)
 
         self.report_period.setCurrentText(self.model.default_report_period)
         self.show_outstanding.setChecked(self.model.show_outstanding_metric)
@@ -494,8 +425,8 @@ if __name__ == "__main__":
     app.setOrganizationName("YourCompany")
     app.setApplicationName("YourApp")
 
-    dlg = SettingsDialog()
+    dlg = SettingsPage()
     if dlg.exec() == QDialog.DialogCode.Accepted:
         print("Settings saved:")
         print(asdict(dlg.model))
-    sys.exit(0)
+    sys.exit(0) 

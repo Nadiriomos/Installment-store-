@@ -25,7 +25,7 @@ def make_sidebar_button(text: str, icon_path: str = None) -> QPushButton:
 
     # Font settings
     font = QFont("Segoe UI", 12)   # family + size
-    font.setBold(True)             # optional
+    #font.setBold(True)             # optional
     btn.setFont(font)
 
     # Icon
