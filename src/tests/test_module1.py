@@ -1,20 +1,38 @@
-from PySide6.QtWidgets import (
-    QApplication, QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QFrame,
-    QLabel, QSizePolicy, QStackedWidget
-)
-from PySide6.QtGui import QPixmap, QKeySequence, QShortcut
-from PySide6.QtCore import Qt
+# Standard library
 import sys, os
+import time
+import shutil
+import webbrowser
+import urllib.parse
+from datetime import datetime
+from socket import create_connection
+
+# Third-party libraries
+from PIL import Image, ImageTk
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
+from openpyxl import Workbook
+
+# pySide6
+from PySide6.QtWidgets import (QApplication, QMainWindow, QPushButton, QLabel, QFrame, QHBoxLayout,
+                               QVBoxLayout, QWidget, QStackedWidget, QTableWidget, QTableWidgetItem,
+                               QHeaderView, QSizePolicy)
+from PySide6.QtCore import Qt
+from PySide6.QtGui import (QKeySequence, QShortcut, QPixmap)
+
+# helpers
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 from src.my_project.utils.helpers import get_screen_geometry, make_sidebar_button
-
-# import page widgets
 from src.tests.pages.dashboard import DashboardPage
 from src.tests.pages.customers import CustomersPage
 from src.tests.pages.payments import PaymentsPage
 from src.tests.pages.reports import ReportsPage
+from src.tests.pages.inventory import InventoryPage
 from src.tests.pages.settings import SettingsPage
 from src.tests.pages.contact import ContactPage
+# === home page ui ===
+
+
 
 class HomePage(QMainWindow):
     def __init__(self):
@@ -56,6 +74,7 @@ class HomePage(QMainWindow):
             ("Customers", "src/icons/customer.png", 1),
             ("Payments", "src/icons/payments.png", 2),
             ("Reports", "src/icons/report.png", 3),
+            ("Inventory", "src/icons/inventory.png", 4)
         ]
         for text, icon, index in top_buttons:
             btn = make_sidebar_button(text, icon)
@@ -66,8 +85,8 @@ class HomePage(QMainWindow):
 
         # --- Bottom buttons ---
         bottom_buttons = [
-            ("Settings", "src/icons/settings.png", 4),
-            ("Contact", "src/icons/contact.png", 5),
+            ("Settings", "src/icons/settings.png", 5),
+            ("Contact", "src/icons/contact.png", 6),
         ]
         for text, icon, index in bottom_buttons:
             btn = make_sidebar_button(text, icon)
@@ -83,8 +102,9 @@ class HomePage(QMainWindow):
         stack.addWidget(CustomersPage())  # index 1
         stack.addWidget(PaymentsPage())   # index 2
         stack.addWidget(ReportsPage())    # index 3
-        stack.addWidget(SettingsPage())   # index 4
-        stack.addWidget(ContactPage())    # index 5
+        stack.addWidget(InventoryPage())  # index 4
+        stack.addWidget(SettingsPage())   # index 5
+        stack.addWidget(ContactPage())    # index 6
         return stack
 
 
