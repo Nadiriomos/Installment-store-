@@ -23,13 +23,13 @@ from PySide6.QtGui import (QKeySequence, QShortcut, QPixmap)
 # helpers
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 from src.my_project.utils.helpers import get_screen_geometry, make_sidebar_button
-from src.my_project.pages.dashboard import DashboardPage
-from src.my_project.pages.customers import CustomersPage
-from src.my_project.pages.payments import PaymentsPage
-from src.my_project.pages.reports import ReportsPage
-from src.my_project.pages.inventory import InventoryPage
-from src.my_project.pages.settings import SettingsPage
-from src.my_project.pages.contact import ContactPage
+from src.tests.pages.dashboard import DashboardPage
+from src.tests.pages.customers import CustomersPage
+from src.tests.pages.payments import PaymentsPage
+from src.tests.pages.reports import ReportsPage
+from src.tests.pages.inventory import InventoryPage
+from src.tests.pages.settings import SettingsPage
+from src.tests.pages.contact import ContactPage
 # === home page ui ===
 
 

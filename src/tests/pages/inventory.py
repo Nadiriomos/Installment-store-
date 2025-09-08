@@ -5,6 +5,8 @@ import sys
 import json
 import hashlib
 import secrets
+import webbrowser
+import urllib.parse
 from dataclasses import dataclass, asdict
 from typing import List, Dict, Any
 
@@ -13,7 +15,7 @@ from PySide6.QtCore import Qt, QSettings, QAbstractTableModel, QModelIndex
 from PySide6.QtGui import QDoubleValidator
 from PySide6.QtWidgets import (
     QApplication,QCheckBox,QComboBox,QDialog,QDialogButtonBox,QFormLayout,QHBoxLayout,
-    QHeaderView,QHeaderView,QInputDialog,QLineEdit,QMessageBox,
+    QHeaderView,QHeaderView,QInputDialog,QLineEdit,QMessageBox,QPushButton,QTextEdit,
     QPushButton,QSpinBox,QTabWidget,QTableView,QVBoxLayout,
     QWidget,QFileDialog,QLabel,QDoubleSpinBox, QFrame
 )
@@ -199,39 +201,44 @@ class InventoryPage(QDialog):
     # --------------------------
     def _build_supplier_management_tab(self) -> QWidget:
         w = QWidget()
-        layout = QVBoxLayout(w)
-        form = QFormLayout()
-        layout.addLayout(form) 
+        form = QFormLayout(w)
 
         # Supplier fields
         self.supplier_name = QLineEdit()
-        self.supplier_name.setPlaceholderText("Supplier Name")
-
         self.supplier_email = QLineEdit()
-        self.supplier_email.setPlaceholderText("Supplier Email")
-
         self.supplier_phone1 = QLineEdit()
-        self.supplier_phone1.setPlaceholderText("Primary Phone Number")
-
         self.supplier_phone2 = QLineEdit()
-        self.supplier_phone2.setPlaceholderText("Secondary Phone Number")
 
+        # Social media field + button
         self.supplier_social_media = QLineEdit()
-        self.supplier_social_media.setPlaceholderText("Social Media Handle")
+        self.supplier_social_media.setPlaceholderText("Social Media Handle or Link")
 
-        self.supplier_address = QLineEdit()
-        self.supplier_address.setPlaceholderText("Supplier Address")
+        open_button = QPushButton("Open")
+        open_button.clicked.connect(self._open_social_media)
 
+        sm_layout = QHBoxLayout()
+        sm_layout.addWidget(self.supplier_social_media)
+        sm_layout.addWidget(open_button)
+
+        self.supplier_address = QTextEdit()
+        self.supplier_address.setFixedHeight(80)
 
         # Layout
-        form.addRow("Name ", self.supplier_name)
-        form.addRow("Email ", self.supplier_email)
-        form.addRow("Phone 1 ", self.supplier_phone1)
-        form.addRow("Phone 2 ", self.supplier_phone2)
-        form.addRow("Social Media ", self.supplier_social_media)
-        form.addRow("Address ", self.supplier_address)
+        form.addRow("Name", self.supplier_name)
+        form.addRow("Email", self.supplier_email)
+        form.addRow("Phone 1", self.supplier_phone1)
+        form.addRow("Phone 2", self.supplier_phone2)
+        form.addRow("Social Media", sm_layout)  # << put layout here
+        form.addRow("Address", self.supplier_address)
 
         return w
+
+    def _open_social_media(self):
+        url = self.supplier_social_media.text().strip()
+        if url:  # only try if not empty
+            if not url.startswith("http"):  # if user forgot http://
+                url = "https://" + url
+            webbrowser.open(url)
 
 
 # ------------------------------
