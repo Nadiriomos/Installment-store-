@@ -12,30 +12,10 @@ from typing import List, Dict, Any
 from PySide6.QtCore import Qt, QSettings, QAbstractTableModel, QModelIndex
 from PySide6.QtGui import QDoubleValidator
 from PySide6.QtWidgets import (
-    QApplication,
-    QCheckBox,
-    QComboBox,
-    QDialog,
-    QDialogButtonBox,
-    QFormLayout,
-    QHBoxLayout,
-    QHeaderView,
-    QInputDialog,
-    QLineEdit,
-    QMessageBox,
-    QPushButton,
-    QSpinBox,
-    QTabWidget,
-    QTableView,
-    QVBoxLayout,
-    QWidget,
-    QFileDialog,
-    QLabel,
-    QAbstractItemView,
-    QDoubleSpinBox,
-    QTextEdit,
-    QListWidget,
-    QListWidgetItem, QFrame,
+    QApplication,QCheckBox,QComboBox,QDialog,QDialogButtonBox,QFormLayout,QHBoxLayout,
+    QHeaderView,QHeaderView,QInputDialog,QLineEdit,QMessageBox,
+    QPushButton,QSpinBox,QTabWidget,QTableView,QVBoxLayout,
+    QWidget,QFileDialog,QLabel,QDoubleSpinBox, QFrame
 )
 
 class Product:
@@ -67,6 +47,7 @@ class InventoryPage(QDialog):
         self.tabs = QTabWidget()
         self.tabs.addTab(self._build_new_product_tab(), "New Product")
         self.tabs.addTab(self._build_inventory_management_tab(), "Inventory Management")
+        self.tabs.addTab(self._build_supplier_management_tab(), "Suppliers Management")
 
         # Buttons (same as SettingsPage)
         self.buttons = QDialogButtonBox(
@@ -89,8 +70,9 @@ class InventoryPage(QDialog):
     # --------------------------
     def _build_new_product_tab(self) -> QWidget:
         w = QWidget()
-        form = QFormLayout(w)
         layout = QVBoxLayout(w)
+        form = QFormLayout()
+        layout.addLayout(form)
 
         # Minimal fields for a product
 
@@ -135,8 +117,9 @@ class InventoryPage(QDialog):
     # --------------------------
     def _build_inventory_management_tab(self) -> QWidget:
         w = QWidget()
-        form = QFormLayout(w)
         layout = QVBoxLayout(w)
+        form = QFormLayout()
+        layout.addLayout(form)
 
         # brands
         form.addRow(QLabel("Brands:"))
@@ -208,6 +191,45 @@ class InventoryPage(QDialog):
         form.addRow("select tag to delete", self.tag)
         form.addRow(self.delete_tag_btn)
         form.addRow(line)
+
+        return w
+    
+    # --------------------------
+    # Tab: Supplier Management
+    # --------------------------
+    def _build_supplier_management_tab(self) -> QWidget:
+        w = QWidget()
+        layout = QVBoxLayout(w)
+        form = QFormLayout()
+        layout.addLayout(form) 
+
+        # Supplier fields
+        self.supplier_name = QLineEdit()
+        self.supplier_name.setPlaceholderText("Supplier Name")
+
+        self.supplier_email = QLineEdit()
+        self.supplier_email.setPlaceholderText("Supplier Email")
+
+        self.supplier_phone1 = QLineEdit()
+        self.supplier_phone1.setPlaceholderText("Primary Phone Number")
+
+        self.supplier_phone2 = QLineEdit()
+        self.supplier_phone2.setPlaceholderText("Secondary Phone Number")
+
+        self.supplier_social_media = QLineEdit()
+        self.supplier_social_media.setPlaceholderText("Social Media Handle")
+
+        self.supplier_address = QLineEdit()
+        self.supplier_address.setPlaceholderText("Supplier Address")
+
+
+        # Layout
+        form.addRow("Name ", self.supplier_name)
+        form.addRow("Email ", self.supplier_email)
+        form.addRow("Phone 1 ", self.supplier_phone1)
+        form.addRow("Phone 2 ", self.supplier_phone2)
+        form.addRow("Social Media ", self.supplier_social_media)
+        form.addRow("Address ", self.supplier_address)
 
         return w
 
