@@ -44,7 +44,7 @@ class SupplierManagementTab(QWidget):
         sm_row.addWidget(self.supplier_social_media)
         sm_row.addWidget(open_button)
 
-        self.supplier_address = QTextEdit()
+        self.supplier_address = QLineEdit()
 
         # Add rows
         form.addRow("Name", self.supplier_name)
@@ -60,3 +60,31 @@ class SupplierManagementTab(QWidget):
             url = "https://" + url
         if url:
             webbrowser.open(url)
+
+# ------------------------------    
+# Demo launcher
+# ------------------------------
+if __name__ == "__main__":
+    app = QApplication([])
+
+    dlg = QDialog()
+    dlg.setWindowTitle("Inventory Management Tab Demo")
+    dlg.setMinimumSize(720, 600)
+    dlg.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+    tab = SupplierManagementTab()
+
+    buttons = QDialogButtonBox(
+        QDialogButtonBox.Cancel
+        | QDialogButtonBox.Ok
+    )
+    buttons.button(QDialogButtonBox.Ok).setShortcut("Ctrl+Return")
+    buttons.rejected.connect(dlg.reject)
+    buttons.accepted.connect(dlg.accept)
+
+    root = QVBoxLayout(dlg)
+    root.addWidget(tab)
+    root.addWidget(buttons)
+
+    dlg.show()
+    sys.exit(app.exec())

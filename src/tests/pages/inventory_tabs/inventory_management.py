@@ -24,82 +24,113 @@ from PySide6.QtWidgets import (
 # Inventory Management     
 # ------------------------------
 
-class InventoryManagementTab(QDialog):
-    def _build_inventory_management_tab(self) -> QWidget:
-        w = QWidget()
-        layout = QVBoxLayout(w)
+class InventoryManagementTab(QWidget):
+    def __init__(self):
+        super().__init__()
+
+        root = QVBoxLayout(self)
         form = QFormLayout()
-        layout.addLayout(form)
+        root.addLayout(form)
 
-        # brands
+        # --- Brands ---
         form.addRow(QLabel("Brands:"))
-        line = QFrame()
-        line.setFrameShape(QFrame.HLine)
-        line.setFrameShadow(QFrame.Sunken)
-        form.addRow(line)
+        form.addRow(self._line())
 
-
-        # add brand button
         self.new_brand = QLineEdit()
         self.add_brand_btn = QPushButton("Add New Brand")
+        brand_add_row = QHBoxLayout()
+        brand_add_row.addWidget(self.new_brand)
+        brand_add_row.addWidget(self.add_brand_btn)
+        form.addRow("Add new brand", self._wrap(brand_add_row))
 
-        # delete brand button
         self.brand = QComboBox()
         self.brand.addItems([""])
         self.delete_brand_btn = QPushButton("Delete Selected Brand")
+        brand_del_row = QHBoxLayout()
+        brand_del_row.addWidget(self.brand)
+        brand_del_row.addWidget(self.delete_brand_btn)
+        form.addRow("Select brand to delete", self._wrap(brand_del_row))
 
-        # layout       
-        form.addRow("add new brand", self.new_brand)
-        form.addRow(self.add_brand_btn)
-        form.addRow("select brand to delete", self.brand)
-        form.addRow(self.delete_brand_btn)
-        form.addRow(line)
+        form.addRow(self._line())
 
-        # categories
+        # --- Categories ---
         form.addRow(QLabel("Categories:"))
-        line = QFrame()
-        line.setFrameShape(QFrame.HLine)
-        line.setFrameShadow(QFrame.Sunken)
-        form.addRow(line)
+        form.addRow(self._line())
 
-        # add category button
         self.new_category = QLineEdit()
         self.add_category_btn = QPushButton("Add New Category")
+        cat_add_row = QHBoxLayout()
+        cat_add_row.addWidget(self.new_category)
+        cat_add_row.addWidget(self.add_category_btn)
+        form.addRow("Add new category", self._wrap(cat_add_row))
 
-        # delete category button
         self.category = QComboBox()
         self.category.addItems([""])
         self.delete_category_btn = QPushButton("Delete Selected Category")
+        cat_del_row = QHBoxLayout()
+        cat_del_row.addWidget(self.category)
+        cat_del_row.addWidget(self.delete_category_btn)
+        form.addRow("Select category to delete", self._wrap(cat_del_row))
 
-        # layout
-        form.addRow("add new category", self.new_category)
-        form.addRow(self.add_category_btn)
-        form.addRow("select category to delete", self.category)
-        form.addRow(self.delete_category_btn)
-        form.addRow(line)
+        form.addRow(self._line())
 
-
-        # tags
+        # --- Tags ---
         form.addRow(QLabel("Tags:"))
-        line = QFrame()
-        line.setFrameShape(QFrame.HLine)
-        line.setFrameShadow(QFrame.Sunken)
-        form.addRow(line)
+        form.addRow(self._line())
 
-        # add tag button
         self.new_tag = QLineEdit()
         self.add_tag_btn = QPushButton("Add New Tag")
+        tag_add_row = QHBoxLayout()
+        tag_add_row.addWidget(self.new_tag)
+        tag_add_row.addWidget(self.add_tag_btn)
+        form.addRow("Add new tag", self._wrap(tag_add_row))
 
-        # delete tag button
         self.tag = QComboBox()
         self.tag.addItems([""])
         self.delete_tag_btn = QPushButton("Delete Selected Tag")
+        tag_del_row = QHBoxLayout()
+        tag_del_row.addWidget(self.tag)
+        tag_del_row.addWidget(self.delete_tag_btn)
+        form.addRow("Select tag to delete", self._wrap(tag_del_row))
 
-        # layout       
-        form.addRow("add new tag", self.new_tag)
-        form.addRow(self.add_tag_btn)
-        form.addRow("select tag to delete", self.tag)
-        form.addRow(self.delete_tag_btn)
-        form.addRow(line)
+        form.addRow(self._line())
 
+    # --- helpers ---
+    def _line(self):
+        line = QFrame()
+        line.setFrameShape(QFrame.HLine)
+        line.setFrameShadow(QFrame.Sunken)
+        return line
+
+    def _wrap(self, layout: QHBoxLayout):
+        """QFormLayout.addRow expects a QWidget; wrap an HBox into a QWidget."""
+        w = QWidget()
+        w.setLayout(layout)
         return w
+    
+# ------------------------------
+# Demo launcher
+if __name__ == "__main__":
+    app = QApplication([])
+
+    dlg = QDialog()
+    dlg.setWindowTitle("Inventory Management Tab Demo")
+    dlg.setMinimumSize(720, 600)
+    dlg.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+    tab = InventoryManagementTab()
+
+    buttons = QDialogButtonBox(
+        QDialogButtonBox.Cancel
+        | QDialogButtonBox.Ok
+    )
+    buttons.button(QDialogButtonBox.Ok).setShortcut("Ctrl+Return")
+    buttons.rejected.connect(dlg.reject)
+    buttons.accepted.connect(dlg.accept)
+
+    root = QVBoxLayout(dlg)
+    root.addWidget(tab)
+    root.addWidget(buttons)
+
+    dlg.show()
+    sys.exit(app.exec())

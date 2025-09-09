@@ -23,41 +23,36 @@ from PySide6.QtWidgets import (
 # ------------------------------
 # New Product 
 # ------------------------------
-class NewProductTab(QDialog):
-    def _build_new_product_tab(self) -> QWidget:
-        w = QWidget()
-        layout = QVBoxLayout(w)
+class NewProductTab(QWidget):
+    def __init__(self):
+        super().__init__()
+
+        layout = QVBoxLayout(self)
         form = QFormLayout()
         layout.addLayout(form)
 
         # Minimal fields for a product
-
         self.name_en = QLineEdit()
         self.name_en.setPlaceholderText("Product name in English/French")
-        # Keep it simple: start with a few brands. You can load from settings later.
+
         self.brand = QComboBox()
         self.brand.addItems([""])
 
-        # Categories as a single line, comma-separated (keep minimal)
         self.categories = QLineEdit()
         self.categories.setPlaceholderText("e.g. Electronics, TV")
 
-        # Details as multi-line text
         self.details = QLineEdit()
         self.details.setPlaceholderText("Type and press Enter to add more")
-        
-        # Sale price (>= 0)
+
         self.sale_price = QDoubleSpinBox()
         self.sale_price.setRange(0.0, 1_000_000_000.0)
         self.sale_price.setDecimals(2)
 
-        # Optional fields
         self.barcode = QLineEdit()
         self.installment_allowed = QCheckBox("Installment allowed")
         self.installment_allowed.setChecked(True)
 
-
-        # Layout
+        # Add rows
         form.addRow("Name (English) *", self.name_en)
         form.addRow("Brand", self.brand)
         form.addRow("Categories", self.categories)
@@ -65,5 +60,30 @@ class NewProductTab(QDialog):
         form.addRow("Sale price *", self.sale_price)
         form.addRow("Barcode", self.barcode)
         form.addRow("", self.installment_allowed)
+# ------------------------------
+# Demo launcher
+# ------------------------------
+if __name__ == "__main__":
+    app = QApplication([])
 
-        return w
+    dlg = QDialog()
+    dlg.setWindowTitle("Inventory Management Tab Demo")
+    dlg.setMinimumSize(720, 600)
+    dlg.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+
+    tab = NewProductTab()
+
+    buttons = QDialogButtonBox(
+        QDialogButtonBox.Cancel
+        | QDialogButtonBox.Ok
+    )
+    buttons.button(QDialogButtonBox.Ok).setShortcut("Ctrl+Return")
+    buttons.rejected.connect(dlg.reject)
+    buttons.accepted.connect(dlg.accept)
+
+    root = QVBoxLayout(dlg)
+    root.addWidget(tab)
+    root.addWidget(buttons)
+
+    dlg.show()
+    sys.exit(app.exec())
