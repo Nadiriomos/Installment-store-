@@ -20,17 +20,10 @@ from PySide6.QtWidgets import (
     QWidget,QFileDialog,QLabel,QDoubleSpinBox, QFrame
 )
 
-class Product:
-    sku: str
-    name_en: str
-    brand: str = ""
-    categories: List[str] = None
-    sale_price: float = 0.0
-    barcode: str = ""
-    installment_allowed: bool = True
-    track_serials: bool = False
-
-
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+from tests.pages.inventory_tabs.new_product import NewProductTab
+from tests.pages.inventory_tabs.inventory_management import InventoryManagementTab
+from tests.pages.inventory_tabs.Supplier_Management import SupplierManagementTab
 # ------------------------------
 # Inventory page (QDialog)
 # ------------------------------
@@ -41,20 +34,15 @@ class InventoryPage(QDialog):
         self.setMinimumSize(720, 560)
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
-        # Persistence (same pattern as SettingsPage)
-        # self.settings = QSettings("YourCompany", "YourApp")
-        # self.products: List[Dict[str, Any]] = self._load_inventory()
-
         # Tabs
         self.tabs = QTabWidget()
-        self.tabs.addTab(self._build_new_product_tab(), "New Product")
-        self.tabs.addTab(self._build_inventory_management_tab(), "Inventory Management")
-        self.tabs.addTab(self._build_supplier_management_tab(), "Suppliers Management")
+        self.tabs.addTab(NewProductTab(), "New Product")
+        self.tabs.addTab(InventoryManagementTab(), "Inventory Management")
+        self.tabs.addTab(SupplierManagementTab(), "Suppliers Management")
 
         # Buttons (same as SettingsPage)
         self.buttons = QDialogButtonBox(
-            QDialogButtonBox.RestoreDefaults
-            | QDialogButtonBox.Cancel
+            QDialogButtonBox.Cancel
             | QDialogButtonBox.Ok
         )
         #self.buttons.clicked.connect(self._on_buttons)
@@ -66,180 +54,6 @@ class InventoryPage(QDialog):
 
         # Shortcuts (same idea as SettingsPage)
         self.buttons.button(QDialogButtonBox.Ok).setShortcut("Ctrl+Return")
-
-    # --------------------------
-    # Tab: New Product
-    # --------------------------
-    def _build_new_product_tab(self) -> QWidget:
-        w = QWidget()
-        layout = QVBoxLayout(w)
-        form = QFormLayout()
-        layout.addLayout(form)
-
-        # Minimal fields for a product
-
-        self.name_en = QLineEdit()
-        self.name_en.setPlaceholderText("Product name in English/French")
-        # Keep it simple: start with a few brands. You can load from settings later.
-        self.brand = QComboBox()
-        self.brand.addItems([""])
-
-        # Categories as a single line, comma-separated (keep minimal)
-        self.categories = QLineEdit()
-        self.categories.setPlaceholderText("e.g. Electronics, TV")
-
-        # Details as multi-line text
-        self.details = QLineEdit()
-        self.details.setPlaceholderText("Type and press Enter to add more")
-        
-        # Sale price (>= 0)
-        self.sale_price = QDoubleSpinBox()
-        self.sale_price.setRange(0.0, 1_000_000_000.0)
-        self.sale_price.setDecimals(2)
-
-        # Optional fields
-        self.barcode = QLineEdit()
-        self.installment_allowed = QCheckBox("Installment allowed")
-        self.installment_allowed.setChecked(True)
-
-
-        # Layout
-        form.addRow("Name (English) *", self.name_en)
-        form.addRow("Brand", self.brand)
-        form.addRow("Categories", self.categories)
-        form.addRow("Details", self.details)
-        form.addRow("Sale price *", self.sale_price)
-        form.addRow("Barcode", self.barcode)
-        form.addRow("", self.installment_allowed)
-
-        return w
-    
-    # --------------------------
-    # Tab: Inventory Management
-    # --------------------------
-    def _build_inventory_management_tab(self) -> QWidget:
-        w = QWidget()
-        layout = QVBoxLayout(w)
-        form = QFormLayout()
-        layout.addLayout(form)
-
-        # brands
-        form.addRow(QLabel("Brands:"))
-        line = QFrame()
-        line.setFrameShape(QFrame.HLine)
-        line.setFrameShadow(QFrame.Sunken)
-        form.addRow(line)
-
-
-        # add brand button
-        self.new_brand = QLineEdit()
-        self.add_brand_btn = QPushButton("Add New Brand")
-
-        # delete brand button
-        self.brand = QComboBox()
-        self.brand.addItems([""])
-        self.delete_brand_btn = QPushButton("Delete Selected Brand")
-
-        # layout       
-        form.addRow("add new brand", self.new_brand)
-        form.addRow(self.add_brand_btn)
-        form.addRow("select brand to delete", self.brand)
-        form.addRow(self.delete_brand_btn)
-        form.addRow(line)
-
-        # categories
-        form.addRow(QLabel("Categories:"))
-        line = QFrame()
-        line.setFrameShape(QFrame.HLine)
-        line.setFrameShadow(QFrame.Sunken)
-        form.addRow(line)
-
-        # add category button
-        self.new_category = QLineEdit()
-        self.add_category_btn = QPushButton("Add New Category")
-
-        # delete category button
-        self.category = QComboBox()
-        self.category.addItems([""])
-        self.delete_category_btn = QPushButton("Delete Selected Category")
-
-        # layout
-        form.addRow("add new category", self.new_category)
-        form.addRow(self.add_category_btn)
-        form.addRow("select category to delete", self.category)
-        form.addRow(self.delete_category_btn)
-        form.addRow(line)
-
-
-        # tags
-        form.addRow(QLabel("Tags:"))
-        line = QFrame()
-        line.setFrameShape(QFrame.HLine)
-        line.setFrameShadow(QFrame.Sunken)
-        form.addRow(line)
-
-        # add tag button
-        self.new_tag = QLineEdit()
-        self.add_tag_btn = QPushButton("Add New Tag")
-
-        # delete tag button
-        self.tag = QComboBox()
-        self.tag.addItems([""])
-        self.delete_tag_btn = QPushButton("Delete Selected Tag")
-
-        # layout       
-        form.addRow("add new tag", self.new_tag)
-        form.addRow(self.add_tag_btn)
-        form.addRow("select tag to delete", self.tag)
-        form.addRow(self.delete_tag_btn)
-        form.addRow(line)
-
-        return w
-    
-    # --------------------------
-    # Tab: Supplier Management
-    # --------------------------
-    def _build_supplier_management_tab(self) -> QWidget:
-        w = QWidget()
-        form = QFormLayout(w)
-
-        # Supplier fields
-        self.supplier_name = QLineEdit()
-        self.supplier_email = QLineEdit()
-        self.supplier_phone1 = QLineEdit()
-        self.supplier_phone2 = QLineEdit()
-
-        # Social media field + button
-        self.supplier_social_media = QLineEdit()
-        self.supplier_social_media.setPlaceholderText("Social Media Handle or Link")
-
-        open_button = QPushButton("Open")
-        open_button.clicked.connect(self._open_social_media)
-
-        sm_layout = QHBoxLayout()
-        sm_layout.addWidget(self.supplier_social_media)
-        sm_layout.addWidget(open_button)
-
-        self.supplier_address = QTextEdit()
-        self.supplier_address.setFixedHeight(80)
-
-        # Layout
-        form.addRow("Name", self.supplier_name)
-        form.addRow("Email", self.supplier_email)
-        form.addRow("Phone 1", self.supplier_phone1)
-        form.addRow("Phone 2", self.supplier_phone2)
-        form.addRow("Social Media", sm_layout)  # << put layout here
-        form.addRow("Address", self.supplier_address)
-
-        return w
-
-    def _open_social_media(self):
-        url = self.supplier_social_media.text().strip()
-        if url:  # only try if not empty
-            if not url.startswith("http"):  # if user forgot http://
-                url = "https://" + url
-            webbrowser.open(url)
-
 
 # ------------------------------
 # Demo launcher

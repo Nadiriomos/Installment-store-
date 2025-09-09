@@ -65,3 +65,6 @@ Thumbs.db          # Windows trash
 /src/my_project/utils/__pycache__
 /src/tests/__pycache__
 /src/tests/pages/__pycache__
+/src/tests/utils/__pycache__
+
+/src/tests/pages/inventory_tabs/__pycache__
